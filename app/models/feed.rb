@@ -1,4 +1,5 @@
 require 'rss'
+require 'benchmark'
 
 class Feed < ActiveRecord::Base
   validates :url,
@@ -14,8 +15,10 @@ class Feed < ActiveRecord::Base
   private
 
   def fetch
-    open(url) do |rss|
-      @feed = RSS::Parser.parse(rss)
+    benchmark "Downloading Feed #{url}" do
+      open(url) do |rss|
+        @feed = RSS::Parser.parse(rss)
+      end
     end
   end
 end
