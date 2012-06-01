@@ -2,5 +2,6 @@
 
 FactoryGirl.define do
   factory :feed do
+    url "http://www.orbitz.com/rss/US/NV/LasVegas.rss.xml"
   end
 end
