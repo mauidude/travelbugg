@@ -2,6 +2,10 @@ require 'rss'
 require 'benchmark'
 
 class Feed < ActiveRecord::Base
+  has_many :deals,
+           :order => 'published_at DESC',
+           :conditions => 'deleted_at IS NULL'
+
   validates :url,
             :presence => true,
             :url => true
@@ -15,7 +19,7 @@ class Feed < ActiveRecord::Base
   private
 
   def fetch
-    benchmark "Downloading Feed #{url}" do
+    Feed.benchmark "Downloading Feed #{url}" do
       open(url) do |rss|
         @feed = RSS::Parser.parse(rss)
       end
