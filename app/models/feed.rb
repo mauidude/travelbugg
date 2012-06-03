@@ -24,5 +24,43 @@ class Feed < ActiveRecord::Base
         @feed = RSS::Parser.parse(rss)
       end
     end
+
+    unless self.new_record?
+      Feed.benchmark "Saving Feed #{url}" do
+        # create hash by id
+        deals = Hash[self.deals.map { |d| [d.id, d]}]
+
+        Feed.transaction do
+          @feed.items.each do |item|
+
+            #remove leading/trailing whitespace
+            item.link.strip!
+            item.description.strip!
+            item.title.strip!
+
+            # get the deal with that link
+            deal = self.deals.where(:link => item.link).first
+
+            if deal
+              #remove from deleted deals
+              deals.reject! { |k,v| k == deal.id }
+            else
+              #if it doesn't exist in our system, add it!
+
+              self.deals.create(:link => item.link,
+                  :description => item.description,
+                  :title => item.title,
+                  :feed => self,
+                  :published_at => item.pubDate)
+            end
+          end
+
+          deals.each do |id, d|
+            d.deleted_at = DateTime.now
+            d.save
+          end
+        end
+      end
+    end
   end
 end

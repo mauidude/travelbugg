@@ -1,6 +1,12 @@
 class Deal < ActiveRecord::Base
   belongs_to :feed
 
+  attr_accessible :feed,
+                  :title,
+                  :link,
+                  :description,
+                  :published_at
+
   validates :feed_id,
             :presence => true
 
