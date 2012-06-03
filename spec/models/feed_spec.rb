@@ -102,7 +102,5 @@ RSS
         subject.items[0].link.should eql("http://www.cheaptickets.com/App/ViewAirDeal?deal_id=airtran-airways-flight-deal&WT.mc_id=crssf_top&WT.mc_ev=click")
       end
     end
-
-    pending "NEED TO CHECK deleting of deals from fetch"
   end
 end
