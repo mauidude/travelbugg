@@ -5,3 +5,14 @@
 #
 #   cities = City.create([{ name: 'Chicago' }, { name: 'Copenhagen' }])
 #   Mayor.create(name: 'Emanuel', city: cities.first)
+
+
+feeds = Feed.create([
+    {:url => "http://www.travelzoo.com/airfare/rss/" },
+    {:url => "http://www.cheaptickets.com/rss/topdeals-flights.rss.xml" },
+    {:url => "http://www.cheaptickets.com/rss/cruises.rss.xml" }
+])
+
+feeds.each do |f|
+  f.fetch
+end

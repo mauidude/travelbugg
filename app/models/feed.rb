@@ -11,14 +11,18 @@ class Feed < ActiveRecord::Base
             :url => true
 
   def items
-    fetch unless @feed
+    do_fetch unless @feed
 
     @feed.items
   end
 
+  def fetch
+    do_fetch unless @feed
+  end
+
   private
 
-  def fetch
+  def do_fetch
     Feed.benchmark "Downloading Feed #{url}" do
       open(url) do |rss|
         @feed = RSS::Parser.parse(rss)
