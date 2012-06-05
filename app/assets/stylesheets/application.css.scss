@@ -1,0 +1,31 @@
+@import "partials/base";
+
+body
+{
+  font-family: "Lucida Grande", Arial, sans-serif;
+}
+
+#container
+{
+  @include container;
+  @include blueprint-grid;
+  @include grid-background;
+}
+
+// MOVE THIS:
+.deal
+{
+  padding: 1em 0;
+
+  a
+  {
+    font-weight: bold;
+    font-size: 1.2em;
+    display: block;
+  }
+
+  p
+  {
+    margin: .5em 0;
+  }
+}

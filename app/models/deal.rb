@@ -20,4 +20,8 @@ class Deal < ActiveRecord::Base
 
   validates :published_at,
             :presence => true
+
+  def self.current
+    Deal.where("deleted_at IS NULL").order("published_at DESC")
+  end
 end

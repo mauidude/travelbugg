@@ -6,5 +6,7 @@ class CreateFeeds < ActiveRecord::Migration
 
       t.timestamps
     end
+
+    add_index :feeds, :url, :unique => true
   end
 end

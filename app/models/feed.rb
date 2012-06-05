@@ -8,12 +8,15 @@ class Feed < ActiveRecord::Base
 
   validates :url,
             :presence => true,
-            :url => true
+            :url => true,
+            :uniqueness => {:case_sensitive => false}
+
+  attr_accessible :url
 
   def items
     do_fetch unless @feed
 
-    @feed.items
+    @feed ? @feed.items : []
   end
 
   def fetch
@@ -24,12 +27,16 @@ class Feed < ActiveRecord::Base
 
   def do_fetch
     Feed.benchmark "Downloading Feed #{url}" do
-      open(url) do |rss|
-        @feed = RSS::Parser.parse(rss)
+      begin
+        open(url) do |rss|
+          @feed = RSS::Parser.parse(rss)
+        end
+      rescue Exception => e
+        Rails.logger.warn "Unable to download feed #{self.id} (#{self.url}): #{e.message}"
       end
     end
 
-    unless self.new_record?
+    if @feed && !self.new_record?
       Feed.benchmark "Saving Feed #{url}" do
         # create hash by id
         deals = Hash[self.deals.map { |d| [d.id, d]}]

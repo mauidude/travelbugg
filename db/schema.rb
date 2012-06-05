@@ -34,4 +34,6 @@ ActiveRecord::Schema.define(:version => 20120601034400) do
     t.datetime "updated_at",                                   :null => false
   end
 
+  add_index "feeds", ["url"], :name => "index_feeds_on_url", :unique => true
+
 end

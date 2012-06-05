@@ -11,6 +11,7 @@ describe Feed do
     it { should allow_value("https://www.test.com/rss.xml").for(:url) }
     it { should allow_value("www.test.com/rss.xml").for(:url) }
     it { should_not allow_value("test.com/rss.xml").for(:url) }
+    it { should validate_uniqueness_of(:url).case_insensitive }
   end
 
   describe "#items" do
