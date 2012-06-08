@@ -3,6 +3,7 @@ require 'spec_helper'
 describe Deal do
   describe "associations" do
     it { should belong_to :feed }
+    it { should have_and_belong_to_many :categories }
   end
 
   describe "validations" do
@@ -12,5 +13,13 @@ describe Deal do
     it { should ensure_length_of(:link).is_at_most(4000) }
     it { should validate_presence_of :published_at }
 
+  end
+
+  describe "mass assignment" do
+    it { should allow_mass_assignment_of :feed }
+    it { should allow_mass_assignment_of :title }
+    it { should allow_mass_assignment_of :link }
+    it { should allow_mass_assignment_of :description }
+    it { should allow_mass_assignment_of :published_at }
   end
 end

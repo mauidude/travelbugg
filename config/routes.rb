@@ -1,5 +1,9 @@
 Travelbugg::Application.routes.draw do
-  resources :deals, :only => :show
+  resources :deals, :only => :show do
+    member do
+      get 'train'
+    end
+  end
 
   root :to => "deals#index"
   # The priority is based upon order of creation:

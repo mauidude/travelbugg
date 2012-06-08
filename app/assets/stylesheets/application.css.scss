@@ -9,7 +9,7 @@ body
 {
   @include container;
   @include blueprint-grid;
-  @include grid-background;
+  //@include grid-background;
 }
 
 // MOVE THIS:
@@ -17,7 +17,7 @@ body
 {
   padding: 1em 0;
 
-  a
+  a.title
   {
     font-weight: bold;
     font-size: 1.2em;
@@ -27,5 +27,24 @@ body
   p
   {
     margin: .5em 0;
+  }
+
+  .category
+  {
+    color: red;
+    font-weight: bold;
+    font-size: 1.1em;
+  }
+
+  ul.categories
+  {
+    overflow: auto;
+    font-size: .8em;
+
+    li
+    {
+      float: left;
+      margin: 0 1em 0 0;
+    }
   }
 }

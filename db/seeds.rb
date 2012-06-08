@@ -6,6 +6,16 @@
 #   cities = City.create([{ name: 'Chicago' }, { name: 'Copenhagen' }])
 #   Mayor.create(name: 'Emanuel', city: cities.first)
 
+Category.create([
+                {:name => "Exclude", :display => false},
+                {:name => "Flights", :display => true },
+                {:name => "Cruises", :display => true},
+                {:name => "Hotels", :display => true },
+                {:name => "Packages", :display => true},
+                {:name => "Rental Cars", :display => true},
+                {:name => "Entertainment", :display => true}
+                ])
+
 ActiveRecord::Base.transaction do
   Deal.delete_all
   Feed.delete_all

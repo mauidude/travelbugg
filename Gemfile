@@ -7,6 +7,7 @@ gem 'rails', '3.2.4'
 
 gem 'pg'
 gem 'haml', '~> 3.1.6'
+gem 'stuff-classifier', :git => "git://github.com/mauidude/stuff-classifier.git"
 
 
 # Gems used only for assets and not required

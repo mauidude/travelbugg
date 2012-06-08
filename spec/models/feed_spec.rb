@@ -6,12 +6,18 @@ describe Feed do
   end
 
   describe "validations" do
+    subject { Factory :feed }
+
     it { should validate_presence_of :url }
     it { should allow_value("http://www.test.com/rss.xml").for(:url) }
     it { should allow_value("https://www.test.com/rss.xml").for(:url) }
     it { should allow_value("www.test.com/rss.xml").for(:url) }
     it { should_not allow_value("test.com/rss.xml").for(:url) }
     it { should validate_uniqueness_of(:url).case_insensitive }
+  end
+
+  describe "mass assignment" do
+    it { should allow_mass_assignment_of :url}
   end
 
   describe "#items" do
