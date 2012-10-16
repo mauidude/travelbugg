@@ -1,8 +1,10 @@
 @import "partials/base";
+@import "partials/header";
 
 body
 {
   font-family: "Lucida Grande", Arial, sans-serif;
+  background: $color-background;
 }
 
 #container
@@ -10,6 +12,17 @@ body
   @include container;
   @include blueprint-grid;
   //@include grid-background;
+}
+
+#content
+{
+    padding: 1em;
+    background: $color-content-background;
+}
+
+h1
+{
+  font-size: 1.5em;
 }
 
 // MOVE THIS:

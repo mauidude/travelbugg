@@ -1,4 +1,22 @@
 Travelbugg::Application.routes.draw do
+  get "category/show"
+
+  namespace :admin do
+    resources :feeds, :only => [] do
+      collection do
+        get 'import'
+      end
+    end
+
+    resources :deals, :only => [] do
+      collection do
+        get 'train'
+        post 'train' => 'deals#train_deal', :as => 'train_deal'
+        get 'classify'
+      end
+    end
+  end
+
   resources :deals, :only => :show do
     member do
       get 'train'

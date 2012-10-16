@@ -3,7 +3,7 @@ require 'spec_helper'
 describe Deal do
   describe "associations" do
     it { should belong_to :feed }
-    it { should have_and_belong_to_many :categories }
+    it { should belong_to :category }
   end
 
   describe "validations" do

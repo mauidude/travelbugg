@@ -50,11 +50,17 @@ class Feed < ActiveRecord::Base
             item.title.strip!
 
             # get the deal with that link
-            deal = self.deals.where(:link => item.link).first
+            deal = self.deals.unscoped.where(:link => item.link).first
 
             if deal
               #remove from deleted deals
               deals.reject! { |k,v| k == deal.id }
+
+              if !deal.deleted_at.nil?
+                # already in our system but deleted, undelete it!
+                deal.deleted_at = nil
+                deal.save
+              end
             else
               #if it doesn't exist in our system, add it!
 

@@ -1,6 +1,8 @@
 class Deal < ActiveRecord::Base
   belongs_to :feed
-  has_and_belongs_to_many :categories
+  belongs_to :category
+
+  before_create :pre_classify
 
   attr_accessible :feed,
                   :title,
@@ -24,15 +26,7 @@ class Deal < ActiveRecord::Base
 
   def train(category)
     StuffClassifier::Bayes.open("Deals") do |cls|
-      cls.tokenizer.preprocessing_regexps.merge!({
-          /\b\$?[\d\,\.]+\b/ => ' ',
-          /<.*?>/ => ' '
-      })
-
-      cls.tokenizer.ignore_words |= %w(January,February,March,April,May,June,July,August,September,October,November,December,
-Jan,Feb,Mar,Apr,Jun,Jul,Aug,Sept,Sep,Oct,Nov,Dec,Sun,Mon,Tues,Wed,Thurs,Fri,Sat,Sun,
-Sunday,Monday,Tuesday,Wednesday,Thursday,Friday,Saturday,Sunday,orbitz,travelzoo,travelocity,
-expedia,hotwire,cheap,cheaptickets)
+      initialize_classifier cls
 
       cls.train(category.id, raw_text)
     end
@@ -42,6 +36,8 @@ expedia,hotwire,cheap,cheaptickets)
     category_id = nil
 
     StuffClassifier::Bayes.open("Deals") do |cls|
+      initialize_classifier cls
+
       category_id = cls.classify(raw_text)
     end
 
@@ -49,10 +45,45 @@ expedia,hotwire,cheap,cheaptickets)
   end
 
   def self.current
-    Deal.where("deleted_at IS NULL").order("published_at DESC")
+    Deal.joins(:category).where("categories.display = true").where("deals.deleted_at IS NULL").order("deals.published_at DESC")
+  end
+
+  def self.untrained
+    count = Deal.joins('LEFT OUTER JOIN deal_trainings on deal_trainings.deal_id = deals.id')
+    .where('deal_trainings.id IS NULL')
+    .where('char_length(deals.description) >= 10').count
+
+    Deal.joins('LEFT OUTER JOIN deal_trainings on deal_trainings.deal_id = deals.id')
+      .where('deal_trainings.id IS NULL')
+      .where('char_length(deals.description) >= 10')
+      .offset(rand count).first
+  end
+
+  def self.classify
+    Deal.transaction do
+      Deal.where('category_id IS NULL').each do |deal|
+        deal.category_id = deal.classify
+        deal.save
+      end
+    end
   end
 
   private
+
+  def pre_classify
+    self.category_id = self.classify
+  end
+
+  def initialize_classifier(cls)
+    cls.tokenizer.preprocessing_regexps.merge!({
+                                                   /\b\$?[\d\,\.]+[\%]?\b/ => ' ',
+                                                   /<.*?>/ => ' '
+                                               })
+    cls.tokenizer.ignore_words |= %w(January,February,March,April,May,June,July,August,September,October,November,December,
+Jan,Feb,Mar,Apr,Jun,Jul,Aug,Sept,Sep,Oct,Nov,Dec,Sun,Mon,Tues,Wed,Thurs,Fri,Sat,Sun,
+Sunday,Monday,Tuesday,Wednesday,Thursday,Friday,Saturday,Sunday,orbitz,travelzoo,travelocity,
+expedia,hotwire,cheap,cheaptickets,terms,apply,conditions)
+  end
 
   def raw_text
     [title, description].join(' ')

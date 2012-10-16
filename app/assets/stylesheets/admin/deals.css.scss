@@ -1,0 +1,39 @@
+ul.categories
+{
+  overflow: auto;
+  margin-bottom: 1em;
+
+  li
+  {
+    float: left;
+  }
+
+  input[type=submit]
+  {
+    font-size: 1.2em;
+    margin-right: .5em;
+    width: 5em;
+
+    &.suggested
+    {
+      color: #f00;
+      font-weight: bold;
+    }
+  }
+}
+
+.deal
+{
+  .title
+  {
+    font-weight: bold;
+    display: block;
+    font-size: 1.2em;
+  }
+
+  .description
+  {
+
+  }
+
+}

@@ -8,6 +8,7 @@ gem 'rails', '3.2.4'
 gem 'pg'
 gem 'haml', '~> 3.1.6'
 gem 'stuff-classifier', :git => "git://github.com/mauidude/stuff-classifier.git"
+gem 'formtastic', '~> 2.1.0'
 
 
 # Gems used only for assets and not required
@@ -15,7 +16,9 @@ gem 'stuff-classifier', :git => "git://github.com/mauidude/stuff-classifier.git"
 group :assets do
   gem 'sass-rails',   '~> 3.2.3'
   gem 'coffee-rails', '~> 3.2.1'
-  gem 'compass-rails'
+  #gem 'compass-rails'
+  #gem 'bootstrap-sass', '~> 2.0.4.0'
+  gem 'twitter-bootstrap-rails'
 
   # See https://github.com/sstephenson/execjs#readme for more supported runtimes
   # gem 'therubyracer', :platform => :ruby
@@ -29,6 +32,7 @@ group :development, :test do
   gem 'rspec-rails', '~> 2.10.1'
   gem 'factory_girl_rails', '~> 3.3.0'
   gem 'shoulda', '~> 3.0'
+  gem 'test-unit' #needed for 'block in non_options' error when running rake tasks
 end
 
 # To use ActiveModel has_secure_password

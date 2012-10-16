@@ -3,8 +3,22 @@
   %head
     %title travelbugg
     =stylesheet_link_tag    "application", :media => "all"
+    =content_for :head
     =javascript_include_tag "application"
     =csrf_meta_tags
   %body
     #container
-      =yield
+      -#%header#header
+        %nav
+          %ul
+            -@categories.each do |category|
+              %li= link_to "#{category.name.singularize} Deals", '#'
+
+            %li.search
+              %form
+                %input{:type => :search}
+                %input{:type => :submit}
+
+
+      #content
+        =yield

@@ -6,7 +6,7 @@ describe Feed do
   end
 
   describe "validations" do
-    subject { Factory :feed }
+    subject { FactoryGirl.create :feed }
 
     it { should validate_presence_of :url }
     it { should allow_value("http://www.test.com/rss.xml").for(:url) }

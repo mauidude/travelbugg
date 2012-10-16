@@ -1,9 +1,8 @@
 class DealsController < ApplicationController
-  before_filter :find, :only => [:find, :train]
+  before_filter :find, :only => [:find, :train, :show]
 
   def index
-    @deals = Deal.current.limit(100)#.offset(100).limit(100)
-    @categories = Category.order('name')
+    @deals = Deal.current.includes(:category).limit(100)
   end
 
   def show

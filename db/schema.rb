@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120605021152) do
+ActiveRecord::Schema.define(:version => 20120610182630) do
 
   create_table "categories", :force => true do |t|
     t.string   "name",       :limit => 25, :null => false
@@ -22,12 +22,13 @@ ActiveRecord::Schema.define(:version => 20120605021152) do
 
   add_index "categories", ["name"], :name => "index_categories_on_name", :unique => true
 
-  create_table "categories_deals", :force => true do |t|
-    t.integer "category_id", :null => false
+  create_table "deal_trainings", :force => true do |t|
     t.integer "deal_id",     :null => false
+    t.integer "category_id", :null => false
   end
 
-  add_index "categories_deals", ["category_id", "deal_id"], :name => "index_categories_deals_on_category_id_and_deal_id", :unique => true
+  add_index "deal_trainings", ["deal_id", "category_id"], :name => "index_deal_trainings_on_deal_id_and_category_id", :unique => true
+  add_index "deal_trainings", ["deal_id"], :name => "index_deal_trainings_on_deal_id", :unique => true
 
   create_table "deals", :force => true do |t|
     t.integer  "feed_id"
@@ -38,6 +39,7 @@ ActiveRecord::Schema.define(:version => 20120605021152) do
     t.datetime "deleted_at"
     t.datetime "created_at",                                   :null => false
     t.datetime "updated_at",                                   :null => false
+    t.integer  "category_id"
   end
 
   add_index "deals", ["deleted_at"], :name => "index_deals_on_deleted_at"
