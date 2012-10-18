@@ -1,5 +1,4 @@
 Travelbugg::Application.routes.draw do
-  get "category/show"
 
   namespace :admin do
     resources :feeds, :only => [] do
@@ -18,8 +17,10 @@ Travelbugg::Application.routes.draw do
   end
 
   resources :deals, :only => :show do
-    member do
-      get 'train'
+
+    collection do
+      get 'deals', :action => 'deals', :as => 'deals'
+      get '*category', :action => 'category', :as => 'category', :category => /[a-zA-Z-]+/
     end
   end
 

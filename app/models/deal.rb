@@ -25,20 +25,20 @@ class Deal < ActiveRecord::Base
             :presence => true
 
   def train(category)
-    StuffClassifier::Bayes.open("Deals") do |cls|
+    StuffClassifier::TfIdf.open("Deals") do |cls|
       initialize_classifier cls
 
-      cls.train(category.id, raw_text)
+      cls.train(category.id, title)
     end
   end
 
   def classify
     category_id = nil
 
-    StuffClassifier::Bayes.open("Deals") do |cls|
+    StuffClassifier::TfIdf.open("Deals") do |cls|
       initialize_classifier cls
 
-      category_id = cls.classify(raw_text)
+      category_id = cls.classify(title)
     end
 
     category_id

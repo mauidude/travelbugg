@@ -4,7 +4,7 @@ class Admin::DealsController < ApplicationController
     deal = Deal.untrained
 
     @deal_training = DealTraining.new(:deal => deal)
-    @categories = Category.order :name
+    @categories = Category.unscoped.order :name
     @suggested_category_id = deal.classify
   end
 

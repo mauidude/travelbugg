@@ -44,31 +44,33 @@ class Feed < ActiveRecord::Base
         Feed.transaction do
           @feed.items.each do |item|
 
-            #remove leading/trailing whitespace
-            item.link.strip!
-            item.description.strip!
-            item.title.strip!
+            if !item.pubDate || item.pubDate >= 1.month.ago
+              #remove leading/trailing whitespace
+              item.link.strip!
+              item.description.strip!
+              item.title.strip!
 
-            # get the deal with that link
-            deal = self.deals.unscoped.where(:link => item.link).first
+              # get the deal with that link
+              deal = self.deals.unscoped.where(:link => item.link).first
 
-            if deal
-              #remove from deleted deals
-              deals.reject! { |k,v| k == deal.id }
+              if deal
+                #remove from deleted deals
+                deals.reject! { |k,v| k == deal.id }
 
-              if !deal.deleted_at.nil?
-                # already in our system but deleted, undelete it!
-                deal.deleted_at = nil
-                deal.save
+                if !deal.deleted_at.nil?
+                  # already in our system but deleted, undelete it!
+                  deal.deleted_at = nil
+                  deal.save
+                end
+              else
+                #if it doesn't exist in our system, add it!
+
+                self.deals.create(:link => item.link,
+                    :description => item.description,
+                    :title => item.title,
+                    :feed => self,
+                    :published_at => item.pubDate)
               end
-            else
-              #if it doesn't exist in our system, add it!
-
-              self.deals.create(:link => item.link,
-                  :description => item.description,
-                  :title => item.title,
-                  :feed => self,
-                  :published_at => item.pubDate)
             end
           end
 

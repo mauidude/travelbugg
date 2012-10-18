@@ -1,7 +1,8 @@
 .deal
   =link_to deal.title, deal_path(deal.id), :class => :title
   %p= truncate(strip_tags(deal.description), :length => 250, :separator => ' ')
-  .category= deal.category.name
+  %span.muted= "Added #{time_ago_in_words deal.published_at } ago"
+  /.category= deal.category.name
   -#%ul.categories
     -@categories.each do |category|
       %li=link_to category.name, train_deal_path(deal.id, :category_id => category.id)
