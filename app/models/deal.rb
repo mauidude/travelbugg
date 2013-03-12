@@ -68,6 +68,15 @@ class Deal < ActiveRecord::Base
     end
   end
 
+  def self.reclassify
+    Deal.transaction do
+      Deal.all do |deal|
+        deal.category_id = deal.classify
+        deal.save
+      end
+    end
+  end
+
   private
 
   def pre_classify

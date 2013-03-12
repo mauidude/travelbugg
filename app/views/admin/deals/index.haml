@@ -1,0 +1,31 @@
+-content_for :title do
+  Newest Deals
+  -if @category
+    ="in #{@category.name}"
+
+#deals
+  =render @deals
+
+-content_for(:scripts) do
+  :javascript
+    (function() {
+       var page = 0;
+       var loading = false;
+       $(window).scroll(function() {
+          if (loading) return;
+
+          if ($(this).scrollTop() > $(document).height() - $(this).height() - 200) {
+            loading = true;
+            page++;
+
+            $.ajax({
+              url: '#{deals_admin_deals_path(:format => :js)}?page=' + page,
+              type: 'get',
+              dataType: 'script',
+              success: function() {
+                loading = false;
+              }
+            });
+          }
+       });
+    })();

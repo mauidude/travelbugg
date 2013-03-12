@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120610182630) do
+ActiveRecord::Schema.define(:version => 20121019021354) do
 
   create_table "categories", :force => true do |t|
     t.string   "name",       :limit => 25, :null => false
@@ -44,6 +44,14 @@ ActiveRecord::Schema.define(:version => 20120610182630) do
 
   add_index "deals", ["deleted_at"], :name => "index_deals_on_deleted_at"
   add_index "deals", ["feed_id", "link"], :name => "index_deals_on_feed_id_and_link", :unique => true
+
+  create_table "destinations", :force => true do |t|
+    t.string   "name",       :limit => 50, :null => false
+    t.datetime "created_at",               :null => false
+    t.datetime "updated_at",               :null => false
+  end
+
+  add_index "destinations", ["name"], :name => "index_destinations_on_name", :unique => true
 
   create_table "feeds", :force => true do |t|
     t.string   "url",        :limit => 4000,                   :null => false
