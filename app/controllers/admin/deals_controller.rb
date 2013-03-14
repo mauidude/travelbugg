@@ -1,20 +1,21 @@
 class Admin::DealsController < ApplicationController
-  before_filter :get_deals, :only => [:index, :deals, :category]
+  before_filter :load_deals, only: [:index, :deals, :category]
 
   def index
 
   end
 
   def deals
-    render :layout => false
+    render layout: false
   end
 
   def category
-    render 'index'
+    render :index
   end
 
   def train
-    deal = Deal.untrained
+    n = Deal.untrained.count
+    deal = Deal.untrained.order(:id).limit(1).offset("RANDOM() * #{n}")
 
     @deal_training = DealTraining.new(:deal => deal)
     @categories = Category.unscoped.order :name
@@ -34,27 +35,27 @@ class Admin::DealsController < ApplicationController
   end
 
   def classify
-    Deal.classify
+    Deal.classify!
 
     redirect_to root_path
   end
 
   def reclassify
-    Deal.reclassify
+    Deal.reclassify!
 
     redirect_to root_path
   end
 
   private
-  def get_deals
-    @page = params[:page].to_i || 0
-    @categories = Category.display
+    def load_deals
+      @page = params[:page].to_i || 0
+      @categories = Category.all
 
-    unless params[:category].nil?
-      @category = Category.from_param! params[:category].gsub(/-/, ' ')
-      @deals = Deal.current.includes(:category).where(:category_id => @category.id).limit(20)
-    else
-      @deals = Deal.current.includes(:category).limit(20).offset(@page * 20)
+      unless params[:category].nil?
+        @category = Category.from_param! params[:category].gsub(/-/, ' ')
+        @deals = @category.current.includes(:category).limit(20)
+      else
+        @deals = Deal.current.includes(:category).limit(20).offset(@page * 20)
+      end
     end
-  end
 end

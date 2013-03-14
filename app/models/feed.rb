@@ -3,13 +3,13 @@ require 'benchmark'
 
 class Feed < ActiveRecord::Base
   has_many :deals,
-           :order => 'published_at DESC',
-           :conditions => 'deleted_at IS NULL'
+           order: 'published_at DESC',
+           conditions: 'deleted_at IS NULL'
 
   validates :url,
-            :presence => true,
-            :url => true,
-            :uniqueness => {:case_sensitive => false}
+            presence: true,
+            url: true,
+            uniqueness: { case_sensitive: false }
 
   attr_accessible :url
 
@@ -19,13 +19,15 @@ class Feed < ActiveRecord::Base
     @feed ? @feed.items : []
   end
 
-  def fetch
+  def fetch!
     do_fetch unless @feed
   end
 
   private
 
   def do_fetch
+    Rails.logger.debug "Downloading Feed #{url}"
+    
     Feed.benchmark "Downloading Feed #{url}" do
       begin
         open(url) do |rss|

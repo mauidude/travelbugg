@@ -7,23 +7,23 @@ Travelbugg::Application.routes.draw do
       end
     end
 
-    resources :deals, :only => [:index] do
+    resources :deals, only: :index do
       collection do
         get 'train'
         post 'train' => 'deals#train_deal', :as => 'train_deal'
         get 'classify'
         get 'reclassify'
 
-        get 'deals', :action => 'deals', :as => 'deals'
+        get :deals
         get '*category', :action => 'category', :as => 'category', :category => /[a-zA-Z-]+/
       end
     end
   end
 
-  resources :deals, :only => :show do
+  resources :deals, only: :show do
 
     collection do
-      get 'deals', :action => 'deals', :as => 'deals'
+      get :deals
       get '*category', :action => 'category', :as => 'category', :category => /[a-zA-Z-]+/
     end
   end

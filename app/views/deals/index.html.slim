@@ -1,13 +1,13 @@
 -content_for :title do
-  Newest Deals
+  | Newest Deals
   -if @category
-    ="in #{@category.name}"
+    =" in #{@category.name}"
 
 #deals
   =render @deals
 
 -content_for(:scripts) do
-  :javascript
+  javascript:
     (function() {
        var page = 0;
        var loading = false;

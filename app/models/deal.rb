@@ -10,19 +10,29 @@ class Deal < ActiveRecord::Base
                   :description,
                   :published_at
 
-  validates :feed_id,
-            :presence => true
+  validates :feed,
+            presence: true
 
   validates :title,
-            :presence => true,
-            :length => { :maximum => 4000 }
+            presence: true,
+            length: { maximum: 4000 }
 
   validates :link,
-            :presence => true,
-            :length => { :maximum => 4000 }
+            presence: true,
+            length: { maximum: 4000 }
 
   validates :published_at,
-            :presence => true
+            presence: true
+
+  scope :current, 
+        joins(:category)
+        .where(categories: { display: true })
+        .where('"deals"."deleted_at" IS NULL')
+        .order('"deals"."published_at" DESC')
+
+
+  scope :untrained, 
+        joins('LEFT OUTER JOIN "deal_trainings"."deal_id" ON "deals"."id" = "deal_trainings"."deal_id"')
 
   def train(category)
     StuffClassifier::TfIdf.open("Deals") do |cls|
@@ -44,44 +54,43 @@ class Deal < ActiveRecord::Base
     category_id
   end
 
-  def self.current
-    Deal.joins(:category).where("categories.display = true").where("deals.deleted_at IS NULL").order("deals.published_at DESC")
-  end
+  class << self
 
-  def self.untrained
-    count = Deal.joins('LEFT OUTER JOIN deal_trainings on deal_trainings.deal_id = deals.id')
-    .where('deal_trainings.id IS NULL')
-    .where('char_length(deals.description) >= 10').count
-
-    Deal.joins('LEFT OUTER JOIN deal_trainings on deal_trainings.deal_id = deals.id')
+    def untrained
+      count = Deal.joins('LEFT OUTER JOIN deal_trainings on deal_trainings.deal_id = deals.id')
       .where('deal_trainings.id IS NULL')
-      .where('char_length(deals.description) >= 10')
-      .offset(rand count).first
-  end
+      .where('char_length(deals.description) >= 10').count
 
-  def self.classify
-    Deal.transaction do
-      Deal.where('category_id IS NULL').each do |deal|
-        deal.category_id = deal.classify
-        deal.save
+      Deal.joins('LEFT OUTER JOIN deal_trainings on deal_trainings.deal_id = deals.id')
+        .where('deal_trainings.id IS NULL')
+        .where('char_length(deals.description) >= 10')
+        .offset(rand count).first
+    end
+
+    def classify!
+      Deal.transaction do
+        Deal.where('category_id IS NULL').each do |deal|
+          deal.category_id = deal.classify
+          deal.save
+        end
       end
     end
-  end
 
-  def self.reclassify
-    Deal.transaction do
-      Deal.all do |deal|
-        deal.category_id = deal.classify
-        deal.save
+    def reclassify!
+      Deal.transaction do
+        Deal.all do |deal|
+          deal.category_id = deal.classify
+          deal.save
+        end
       end
     end
   end
 
   private
 
-  def pre_classify
-    self.category_id = self.classify
-  end
+    def pre_classify
+      self.category_id = self.classify
+    end
 
   def initialize_classifier(cls)
     cls.tokenizer.preprocessing_regexps.merge!({

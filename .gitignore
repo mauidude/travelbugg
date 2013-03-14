@@ -16,3 +16,4 @@
 /.idea
 /config/stuff_classifier.bin
 /config/stuff_classifier.bin.cpgz
+.rvmrc

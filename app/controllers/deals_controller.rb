@@ -1,17 +1,17 @@
 class DealsController < ApplicationController
-  before_filter :find, :only => [:find, :show]
-  before_filter :get_deals, :only => [:index, :deals, :category]
+  before_filter :load_deal, only: :show
+  before_filter :load_deals, only: [:index, :deals, :category]
 
   def index
 
   end
 
   def deals
-    render :layout => false
+    render layout: false
   end
 
   def category
-    render 'index'
+    render :index
   end
 
   def show
@@ -19,19 +19,19 @@ class DealsController < ApplicationController
   end
 
   private
-  def find
-    @deal = Deal.find params[:id]
-  end
-
-  def get_deals
-    @page = params[:page].to_i || 0
-    @categories = Category.display
-
-    unless params[:category].nil?
-      @category = Category.from_param! params[:category].gsub(/-/, ' ')
-      @deals = Deal.current.includes(:category).where(:category_id => @category.id).limit(20)
-    else
-      @deals = Deal.current.includes(:category).limit(20).offset(@page * 20)
+    def load_deal
+      @deal = Deal.find(params[:id])
     end
-  end
+
+    def load_deals
+      @page = params[:page].to_i || 0
+      @categories = Category.all
+
+      unless params[:category].nil?
+        @category = Category.from_param params[:category].gsub(/-/, ' ')
+        @deals = @category.deals.current.limit(20)
+      else
+        @deals = Deal.current.includes(:category).limit(20).offset(@page * 20)
+      end
+    end
 end
