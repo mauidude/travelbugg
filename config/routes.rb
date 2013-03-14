@@ -20,10 +20,8 @@ Travelbugg::Application.routes.draw do
     end
   end
 
-  resources :deals, only: :show do
-
+  resources :deals, only: [:show, :index] do
     collection do
-      get :deals
       get '*category', :action => 'category', :as => 'category', :category => /[a-zA-Z-]+/
     end
   end

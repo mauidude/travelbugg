@@ -5,7 +5,10 @@ class DealsController < ApplicationController
   before_filter :load_categories
 
   def index
-
+    respond_to do |format|
+      format.html
+      format.js
+    end
   end
 
   def deals
@@ -13,7 +16,10 @@ class DealsController < ApplicationController
   end
 
   def category
-    render :index
+    respond_to do |format|
+      format.html { render :index }
+      format.js { render :index }
+    end
   end
 
   def show

@@ -5,7 +5,7 @@
 
 #deals
   =render @deals
-
+  
 -content_for(:scripts) do
   javascript:
     (function() {
@@ -19,7 +19,7 @@
             page++;
 
             $.ajax({
-              url: '#{deals_deals_path(:format => :js)}?page=' + page,
+              url: '#{@category.nil? ? deals_path(format: :js) : category_deals_path(@category, format: :js)}?page=' + page,
               type: 'get',
               dataType: 'script',
               success: function() {
