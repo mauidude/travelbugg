@@ -8,7 +8,8 @@ class Deal < ActiveRecord::Base
                   :title,
                   :link,
                   :description,
-                  :published_at
+                  :published_at,
+                  :category_id
 
   validates :feed,
             presence: true
@@ -32,7 +33,7 @@ class Deal < ActiveRecord::Base
 
 
   scope :untrained, 
-        joins('LEFT OUTER JOIN "deal_trainings"."deal_id" ON "deals"."id" = "deal_trainings"."deal_id"')
+        joins('LEFT OUTER JOIN "deal_trainings" ON "deals"."id" = "deal_trainings"."deal_id"')
 
   def train(category)
     StuffClassifier::TfIdf.open("Deals") do |cls|
@@ -56,31 +57,19 @@ class Deal < ActiveRecord::Base
 
   class << self
 
-    def untrained
-      count = Deal.joins('LEFT OUTER JOIN deal_trainings on deal_trainings.deal_id = deals.id')
-      .where('deal_trainings.id IS NULL')
-      .where('char_length(deals.description) >= 10').count
-
-      Deal.joins('LEFT OUTER JOIN deal_trainings on deal_trainings.deal_id = deals.id')
-        .where('deal_trainings.id IS NULL')
-        .where('char_length(deals.description) >= 10')
-        .offset(rand count).first
-    end
-
     def classify!
       Deal.transaction do
         Deal.where('category_id IS NULL').each do |deal|
           deal.category_id = deal.classify
-          deal.save
+          deal.save!
         end
       end
     end
 
     def reclassify!
       Deal.transaction do
-        Deal.all do |deal|
-          deal.category_id = deal.classify
-          deal.save
+        Deal.all.each do |deal|
+          deal.update_attributes({ category_id: deal.classify })
         end
       end
     end

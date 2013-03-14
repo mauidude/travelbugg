@@ -4,7 +4,8 @@ require 'benchmark'
 class Feed < ActiveRecord::Base
   has_many :deals,
            order: 'published_at DESC',
-           conditions: 'deleted_at IS NULL'
+           conditions: 'deleted_at IS NULL',
+           dependent: :destroy
 
   validates :url,
             presence: true,
@@ -27,7 +28,7 @@ class Feed < ActiveRecord::Base
 
   def do_fetch
     Rails.logger.debug "Downloading Feed #{url}"
-    
+
     Feed.benchmark "Downloading Feed #{url}" do
       begin
         open(url) do |rss|
@@ -41,7 +42,7 @@ class Feed < ActiveRecord::Base
     if @feed && !self.new_record?
       Feed.benchmark "Saving Feed #{url}" do
         # create hash by id
-        deals = Hash[self.deals.map { |d| [d.id, d]}]
+        deals_for_deletion = Hash[self.deals.map { |d| [d.id, d]}]
 
         Feed.transaction do
           @feed.items.each do |item|
@@ -53,13 +54,13 @@ class Feed < ActiveRecord::Base
               item.title.strip!
 
               # get the deal with that link
-              deal = self.deals.unscoped.where(:link => item.link).first
+              deal = self.deals.unscoped.where(link: item.link).first
 
               if deal
                 #remove from deleted deals
-                deals.reject! { |k,v| k == deal.id }
+                deals_for_deletion.delete(deal.id)
 
-                if !deal.deleted_at.nil?
+                if deal.deleted_at.present?
                   # already in our system but deleted, undelete it!
                   deal.deleted_at = nil
                   deal.save
@@ -67,16 +68,16 @@ class Feed < ActiveRecord::Base
               else
                 #if it doesn't exist in our system, add it!
 
-                self.deals.create(:link => item.link,
-                    :description => item.description,
-                    :title => item.title,
-                    :feed => self,
-                    :published_at => item.pubDate)
+                self.deals.create(link: item.link,
+                    description: item.description,
+                    title: item.title,
+                    feed: self,
+                    published_at: item.pubDate)
               end
             end
           end
 
-          deals.each do |id, d|
+          deals_for_deletion.each do |id, d|
             d.deleted_at = DateTime.now
             d.save
           end

@@ -1,0 +1,12 @@
+.deal(id="deal-#{deal.id}")
+  =link_to deal.title, deal_path(deal.id), class: :title
+  p= truncate(strip_tags(deal.description), length: 250, separator: ' ')
+  span.muted= "Added #{time_ago_in_words deal.published_at } ago"
+  ul.nav.nav-pills
+    -for category in @categories
+      li
+        =simple_form_for DealTraining.new(deal: deal, category: category), url: train_deal_admin_deals_path, remote: true do |f|
+          =f.input :deal_id, as: :hidden
+          =f.input :category_id, as: :hidden
+
+          =f.submit category.name.singularize, class: ["btn", category.id == deal.classify ? "btn-success" : ""]

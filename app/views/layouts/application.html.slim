@@ -45,7 +45,7 @@ html(lang="en")
           .container-fluid.nav-collapse
             ul.nav
               -for category in @categories
-                li= link_to category.name, category_deals_path(category)
+                li(class=(@category == category ? "active" : ""))= link_to category.name, category_deals_path(category)
 
     .container-fluid
       .row-fluid

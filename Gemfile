@@ -6,10 +6,8 @@ gem 'rails', '3.2.12'
 # gem 'rails', :git => 'git://github.com/rails/rails.git'
 
 gem 'pg'
-gem 'haml', '~> 3.1.6'
 gem 'slim'
 gem 'stuff-classifier', :git => "git://github.com/mauidude/stuff-classifier.git"
-gem 'formtastic', '~> 2.1.0'
 gem 'simple_form'
 
 

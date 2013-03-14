@@ -4,7 +4,7 @@ class DealTraining < ActiveRecord::Base
   belongs_to :deal
   belongs_to :category
 
-  attr_accessible :deal, :category_id, :deal_id
+  attr_accessible :deal, :category_id, :deal_id, :category
 
   validates :deal,
             presence: true

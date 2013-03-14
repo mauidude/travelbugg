@@ -1,0 +1,5 @@
+.deal
+  =link_to deal.title, deal_path(deal), class: :title
+  p= truncate(strip_tags(deal.description), length: 250, separator: ' ')
+  span.muted= "Added #{time_ago_in_words deal.published_at } ago"
+  /.category= deal.category.name

@@ -17,6 +17,6 @@ class Category < ActiveRecord::Base
   end
 
   def self.from_param(param)
-    Category.where("lower(name) = ?", param.downcase).first!
+    Category.where("lower(name) = ?", param.downcase.gsub(/-/, ' ')).first!
   end
 end
